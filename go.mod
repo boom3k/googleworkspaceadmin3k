@@ -1,6 +1,6 @@
-module GoogleWorksapceAdmin3k
+module googleworkspaceadmin3k
 
-go 1.17
+go 1.18
 
 require (
 	golang.org/x/oauth2 v0.0.0-20220411215720-9780585627b5

@@ -1,4 +1,4 @@
-package googleadmin4go
+package googleworkspaceadmin3k
 
 import (
 	"context"
