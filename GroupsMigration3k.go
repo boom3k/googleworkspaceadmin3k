@@ -1,4 +1,4 @@
-package googleworkspaceadmin3k
+package googleworkspace3k
 
 import (
 	"bytes"
