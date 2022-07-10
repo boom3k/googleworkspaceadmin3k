@@ -226,7 +226,7 @@ func (receiver *Directory3k) DeleteMembers(deleteList []string, groupEmail strin
 	log.Printf("Total members removed from %s: %d\n", groupEmail, deleteCounter)
 }
 
-func (receiver *Directory3k) GetMembers(groupEmail string, roles []string) []*admin.Member {
+func (receiver *Directory3k) GetGroupMembersByRole(groupEmail string, roles []string) []*admin.Member {
 	allRoles := strings.ToUpper(strings.Join(roles, ","))
 	log.Printf("Retreiving  %s members from %s\n", allRoles, groupEmail)
 	var members []*admin.Member
@@ -237,7 +237,31 @@ func (receiver *Directory3k) GetMembers(groupEmail string, roles []string) []*ad
 			if strings.Contains(err.Error(), "Quota") {
 				log.Println("Backing off for 3 seconds...")
 				time.Sleep(time.Second * 3)
-				return receiver.GetMembers(groupEmail, roles)
+				return receiver.GetGroupMembersByRole(groupEmail, roles)
+			}
+			return nil
+		}
+		members = append(members, request.Members...)
+		nextPageToken := request.NextPageToken
+		if nextPageToken == "" {
+			log.Printf("%s has %d members\n", groupEmail, len(members))
+			break
+		}
+		log.Printf("Members thus far %s --> [%d]\n", groupEmail, len(members))
+	}
+	return members
+}
+
+func (receiver *Directory3k) GetGroupMembers(groupEmail string) []*admin.Member {
+	var members []*admin.Member
+	for {
+		request, err := receiver.Service.Members.List(groupEmail).Fields("*").MaxResults(200).Do()
+		if err != nil {
+			log.Println(err.Error())
+			if strings.Contains(err.Error(), "Quota") {
+				log.Println("Backing off for 2 seconds...")
+				time.Sleep(time.Second * 2)
+				return receiver.GetGroupMembers(groupEmail)
 			}
 			return nil
 		}
