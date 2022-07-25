@@ -277,9 +277,10 @@ func (receiver *Directory3k) GetAllMembers(groupEmail string) []*admin.Member {
 	return members
 }
 
-func (receiver *Directory3k) GetAllMembersEmails(groupEmail string) {
+func (receiver *Directory3k) GetAllMembersEmails(groupEmail string) []string {
 	var emails []string
 	for _, member := range receiver.GetAllMembers(groupEmail) {
 		emails = append(emails, member.Email)
 	}
+	return emails
 }
