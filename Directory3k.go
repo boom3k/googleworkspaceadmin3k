@@ -252,21 +252,22 @@ func (receiver *Directory3k) GetGroupMembersByRole(groupEmail string, roles []st
 	return members
 }
 
-func (receiver *Directory3k) GetGroupMembers(groupEmail string) []*admin.Member {
+func (receiver *Directory3k) GetAllMembers(groupEmail string) []*admin.Member {
 	var members []*admin.Member
+	nextPageToken := ""
 	for {
-		request, err := receiver.Service.Members.List(groupEmail).Fields("*").MaxResults(200).Do()
+		request, err := receiver.Service.Members.List(groupEmail).Fields("*").PageToken(nextPageToken).MaxResults(200).Do()
 		if err != nil {
 			log.Println(err.Error())
 			if strings.Contains(err.Error(), "Quota") {
 				log.Println("Backing off for 2 seconds...")
 				time.Sleep(time.Second * 2)
-				return receiver.GetGroupMembers(groupEmail)
+				return receiver.GetAllMembers(groupEmail)
 			}
 			return nil
 		}
 		members = append(members, request.Members...)
-		nextPageToken := request.NextPageToken
+		nextPageToken = request.NextPageToken
 		if nextPageToken == "" {
 			log.Printf("%s has %d members\n", groupEmail, len(members))
 			break
