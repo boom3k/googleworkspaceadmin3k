@@ -1,4 +1,4 @@
-module github.com/boom3k/googleworkspace3k
+module github.com/boom3k/googleadmin3k
 
 go 1.18
 
