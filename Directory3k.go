@@ -22,6 +22,8 @@ type Directory3k struct {
 	Domain     string
 }
 
+var tries = 0
+
 func BuildDirectory3k(client *http.Client, adminEmail string, ctx context.Context) *Directory3k {
 	newDirectoryAPI := &Directory3k{}
 	service, err := admin.NewService(ctx, option.WithHTTPClient(client))
@@ -141,7 +143,7 @@ func (receiver *Directory3k) PushMember(groupEmail string, member *admin.Member)
 			return nil
 		}
 		log.Println(err)
-		log.Printf("Insertion of [%s] to group (%s) failed... Retrying in 2 seconds.", member.Email, groupEmail)
+		log.Printf("Insertion of [%s (%s-%s)] to group (%s) failed... Retrying in 2 seconds.", member.Email, member.Role, member.Type, groupEmail)
 		time.Sleep(2 * time.Second)
 		receiver.PushMember(groupEmail, member)
 		return nil
@@ -151,7 +153,7 @@ func (receiver *Directory3k) PushMember(groupEmail string, member *admin.Member)
 }
 
 func (receiver *Directory3k) InsertMembers(memberList []*admin.Member, groupEmail string, maxRoutines int) []*admin.Member {
-	totalInserts := len(memberList) - 1
+	totalInserts := len(memberList)
 	var completedInserts []*admin.Member
 	log.Printf("Total members to insert into from %s: %d\n", groupEmail, totalInserts)
 
