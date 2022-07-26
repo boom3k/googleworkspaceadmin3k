@@ -146,7 +146,7 @@ func (receiver *Directory3k) PushMember(groupEmail string, member *admin.Member)
 		receiver.PushMember(groupEmail, member)
 		return nil
 	}
-	log.Printf("Insertion of [%s] to (%s) was successful!", member.Email, groupEmail)
+	log.Printf("Insertion of [%s](%s) to (%s) was successful!", member.Email, member.Role, groupEmail)
 	return result
 }
 
@@ -196,8 +196,8 @@ func (receiver *Directory3k) DeleteMember(groupEmail, memberEmail string) {
 }
 
 func (receiver *Directory3k) DeleteMembers(deleteList []string, groupEmail string, batchSize int) {
-	totalDeletes := len(deleteList) - 1
-	deleteCounter := 0
+	totalDeletes := len(deleteList)
+	deleteCounter := 1
 	log.Printf("Total members to remove from %s: %d\n", groupEmail, totalDeletes)
 
 	for {
